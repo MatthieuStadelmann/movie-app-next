@@ -1,27 +1,22 @@
-import React from "react";
-import { useQuery } from "react-query";
-
-import movieApiClient from "../utils/apiClient";
+"use client"
+import React, { useContext } from "react";
 import MovieSlider from "./MovieSlider";
+import { DarkModeContext } from "../store/context";
 
-export default function UpcomingMovies() {
-  const { data, isError, error, isLoading } = useQuery<
-    ApiResponse<Movie>,
-    Error
-  >({
-    queryKey: ["upcoming-movies"],
-    queryFn: () => movieApiClient.getMovieListUpcoming(),
-    retry: false,
-  });
+interface UpcomingMoviesProps {
+  data: ApiResponse<Movie> | null;
+}
+
+export default function UpcomingMovies({ data }: UpcomingMoviesProps) {
+  const { theme } = useContext(DarkModeContext);
 
   return (
     <MovieSlider
       movieList={data?.results}
       headingText={"Upcoming"}
-      error={error}
-      loading={isLoading}
+      error={null}
+      loading={false}
       listType={"upcoming"}
     />
   );
 }
-

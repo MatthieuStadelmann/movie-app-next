@@ -1,14 +1,8 @@
-import React, {
-  useEffect,
-  useRef,
-} from "react";
+"use client";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import chroma from "chroma-js";
-
-import PrimaryButton from "./styled/PrimaryButton";
-import backgroundImage from "../assets/search-header.png?as=webp";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/redux/store";
+import { useDarkMode } from "../store/hooks";
 import settings from "../settings";
 
 interface SearchBarProps {
@@ -28,7 +22,8 @@ export default function SearchBar({
   setSuggestions,
   onSuggestionClick,
 }: SearchBarProps) {
-  const theme = useSelector((state: RootState) => state.themeReducer.theme);
+  const { theme } = useDarkMode();
+
   const ref = useRef<HTMLDivElement>(null);
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
@@ -41,7 +36,7 @@ export default function SearchBar({
     function handleClickOutside(event: MouseEvent) {
       // Type assertion to ensure the target is a Node
       const target = event.target as Node;
-  
+
       if (ref.current && !ref.current.contains(target)) {
         setSuggestions([]);
       }
@@ -57,8 +52,10 @@ export default function SearchBar({
 
   return (
     <SearchBarContainer>
-      <SearchBarTitle color={settings.colors.background}>Welcome.</SearchBarTitle>
-      <SearchBarSubTitle color={settings.colors.background}>
+      <SearchBarTitle>
+        Welcome.
+      </SearchBarTitle>
+      <SearchBarSubTitle>
         Millions of movies, TV shows and people to discover. Explore now.
       </SearchBarSubTitle>
       <SearchWrapper>
@@ -80,7 +77,7 @@ export default function SearchBar({
             <SuggestionContainer ref={ref}>
               {suggestions.map((suggestion: string) => (
                 <Suggestion
-                  onClick={(() => (onSuggestionClick(suggestion)))}
+                  onClick={() => onSuggestionClick(suggestion)}
                   key={suggestion}
                 >
                   {suggestion}
@@ -138,7 +135,7 @@ const SearchBarContainer = styled.div`
   justify-content: center;
   align-items: flex-start;
   flex-direction: column;
-  background-image: url("${backgroundImage}");
+  background-image: url("/assets/search-header.png");
   background-size: cover;
   background-repeat: no-repeat;
   padding: 20px;

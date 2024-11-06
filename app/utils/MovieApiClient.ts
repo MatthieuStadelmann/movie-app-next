@@ -1,4 +1,4 @@
-import placeholder from "../../public/movie-placeholder.png";
+const placeholder = "/movie-placeholder.png";
 
 export enum ImageSize {
   small = "small",
@@ -71,7 +71,6 @@ export default class ApiClient {
 
   async getMovieListNowPlaying(): Promise<ApiResponse<Movie>> {
     const url = `${this.apiUrl}/movie/now_playing?api_key=${this.apiKey}`;
-    console.log(url);
     return this.fetchFromApi<ApiResponse<Movie>>(url);
   }
 

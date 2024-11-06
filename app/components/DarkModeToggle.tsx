@@ -1,24 +1,23 @@
-import React, { useContext } from "react";
+"use client"
+import React from "react";
+import "react-toggle/style.css";
+
 import Toggle from "react-toggle";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
 
 import { themeList } from "../store/theme";
-import { toggleTheme } from "../store/redux/themeSlice";
-import { RootState } from "../store/redux/store";
+import { useDarkMode } from "../store/hooks";
 
 export default function DarkModeToggle() {
-  const theme = useSelector((state: RootState) => state.themeReducer.theme);
-  const dispatch = useDispatch();
+  const { theme, toggleTheme } = useDarkMode();
+
 
   return (
     <ToggleContainer>
       <Toggle
         defaultChecked={theme === themeList.dark}
         data-testid="dark-mode-toggle"
-        onChange={() => {
-          dispatch(toggleTheme());
-        }}
+        onChange={toggleTheme}
       />
       <ToggleLabel $color={theme.background_secondary}>Dark Mode</ToggleLabel>
     </ToggleContainer>

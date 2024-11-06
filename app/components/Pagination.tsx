@@ -1,7 +1,6 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useContext } from "react";
 import styled from "styled-components";
-import { RootState } from "../store/redux/store";
+import { DarkModeContext } from "../store/context";
 
 export interface PaginationProps {
   currentPage: number;
@@ -14,7 +13,8 @@ export default function Pagination({
   onPageChange,
   lastPage,
 }: PaginationProps) {
-  const theme = useSelector((state: RootState) => state.themeReducer.theme);
+  const { theme } = useContext(DarkModeContext);
+
   return (
     <PaginationContainer>
       <PaginationButton

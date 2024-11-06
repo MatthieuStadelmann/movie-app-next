@@ -1,7 +1,5 @@
-// TrendingNowWrapper.tsx (Server Component)
-import React from "react";
 import movieApiClient from "../utils/apiClient";
-import TrendingNow from "./TrendingNow"; // Import the client component
+import TrendingNow from "./TrendingNow"; 
 
 export default async function TrendingNowWrapper() {
   let data: ApiResponse<Movie> | null = null;

@@ -100,8 +100,7 @@ interface MovieCreditsResponse {
   id: number;
   cast: CastMember[];
 }
-
-
+ 
 
 // types.d.ts
 declare module "*.css" {

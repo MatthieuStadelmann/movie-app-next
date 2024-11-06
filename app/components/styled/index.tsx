@@ -7,6 +7,7 @@ import { DarkModeContext } from "../../store/context";
 import settings from "../../settings";
 
 export const PageContainer = styled.div`
+  max-width: 1300px;
   width: 100%;
   padding-left: 10px;
   padding-right: 10px;

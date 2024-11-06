@@ -42,6 +42,7 @@ function SimpleSliderCard({
 export default memo(SimpleSliderCard);
 
 const SimpleCardContainer = styled.div`
+  flex: 0 0 auto;
   margin-left: 2px;
   margin-right: 2px;
   transition: transform 0.3s ease, box-shadow 0.3s ease, rotate 0.3s ease;

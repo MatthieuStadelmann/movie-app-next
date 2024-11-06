@@ -1,21 +1,20 @@
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo, useContext } from "react";
 import _ from "lodash";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import chroma from "chroma-js";
 
-import { RootState } from "../store/redux/store";
-import { useSelector } from "react-redux";
 import movieApiClient from "../utils/apiClient";
-import settings from "../settings";
 import { formatDate } from "../utils/formatDate";
+import { DarkModeContext } from "../store/context";
+import Link from "next/link";
+import settings from "../settings";
 
 interface MovieCardProps {
   movie: Movie;
 }
 
 function MovieCard({ movie }: MovieCardProps) {
-  const theme = useSelector((state: RootState) => state.themeReducer.theme);
+  const { theme } = useContext(DarkModeContext);
   const [shortPlot, setShortPlot] = useState(movie.overview);
 
   function plotShorten(text: string, length = 250) {
@@ -34,7 +33,7 @@ function MovieCard({ movie }: MovieCardProps) {
       data-testid={`movie-card-container-${movie.id}`}
       $backgroundColor={theme.background}
       $borderColor={theme.background_secondary}
-      to={`/movie/${movie.id}`}
+      href={`/movie/${movie.id}`}
     >
       <img
         height="238"

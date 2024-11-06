@@ -1,33 +1,21 @@
-import React from "react";
-import { useQuery } from "react-query";
-
-import movieApiClient from "../utils/apiClient";
+"use client"
+import React, { useContext } from "react";
 import MovieSlider from "./MovieSlider";
+import { DarkModeContext } from "../store/context";
 
-export default function TopRatedMovies() {
-  const { data, error, isLoading } = useQuery<
-    ApiResponse<Movie>,
-    Error
-  >({
-    queryKey: ["top-rated-movies"],
-    queryFn: () => movieApiClient.getMovieListTopRated(),
-    retry: false,
-    initialData: {
-      results: [],
-      page: 0,
-      total_results: 0,
-      total_pages: 0
-    }
-  });
+interface TopRatedMoviesProps {
+  data: ApiResponse<Movie> | null;
+}
 
+export default function TopRatedMovies({ data }: TopRatedMoviesProps) {
+  const { theme } = useContext(DarkModeContext);
   return (
     <MovieSlider
       movieList={data?.results}
       headingText={"Top Rated"}
-      error={error}
-      loading={isLoading}
+      error={null}
+      loading={false}
       listType={"top-rated"}
     />
   );
 }
-

@@ -1,6 +1,4 @@
-// TrendingNow.tsx (Client Component)
-"use client"; // Mark this as a client component
-
+"use client"
 import React, { useContext } from "react";
 import MovieSlider from "./MovieSlider";
 import { DarkModeContext } from "../store/context";

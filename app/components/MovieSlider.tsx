@@ -28,7 +28,7 @@ export default function MovieSlider({
   listType,
   loading,
 }: MovieSliderProps) {
-  if (loading) {
+  if (!movieList) {
     return (
       <PageSection>
         <SectionTitle>{headingText}</SectionTitle>

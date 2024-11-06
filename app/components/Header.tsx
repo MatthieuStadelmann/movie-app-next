@@ -1,20 +1,23 @@
-import React from "react";
+"use client";
+import React, { useContext } from "react";
 import styled from "styled-components";
 import DarkModeToggle from "./DarkModeToggle";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 import settings from "../settings";
 import chroma from "chroma-js";
-import { useSelector } from "react-redux";
-import { RootState } from "../store/redux/store";
+import { DarkModeContext } from "../store/context";
 
 export default function Header() {
-  const theme = useSelector((state: RootState) => state.themeReducer.theme);
-
+  const { theme } = useContext(DarkModeContext);
+  
   return (
-    <HeaderContainer $backgroundColor={theme.foreground} $color={theme.foreground}>
+    <HeaderContainer
+      $backgroundColor={theme?.foreground}
+      $color={theme?.foreground}
+    >
       <HeaderWrapper role="navigation" aria-label="Movie App">
-        <HeaderLink to="/">
+        <HeaderLink href="/">
           <HeaderHeading>The Movie App</HeaderHeading>
         </HeaderLink>
         <DarkModeToggle></DarkModeToggle>
