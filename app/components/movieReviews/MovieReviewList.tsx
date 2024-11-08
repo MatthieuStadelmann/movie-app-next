@@ -1,26 +1,36 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import movieApiClient from "../../utils/apiClient";
 import MovieReviewCard from "./MovieReviewCard";
 import { ErrorMessage } from "../styled";
 import LoadingIndicator from "../styled/LoadingIndicator";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/redux/store";
-import { useQuery } from "react-query";
+import { DarkModeContext } from "@/app/store/context";
 
 export default function MovieReviewList({ movieId }: { movieId: string }) {
-  const theme = useSelector((state: RootState) => state.themeReducer.theme);
-  const {
-    data: reviewList,
-    error,
-    isLoading,
-  } = useQuery<ApiResponse<MovieReview>, Error>({
-    queryKey: ["movie-reviews", movieId],
-    queryFn: () => movieApiClient.getMovieReviewList(movieId),
-    retry: false,
-  });
+  const { theme } = useContext(DarkModeContext);
+  const [reviewList, setReviewList] = useState<MovieReview[] | null>(null);
+  const [error, setFetchError] = useState<ApiError | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  
+  useEffect(() => {
+    const fetchReviews = async () => {
+      setIsLoading(true);
+      try {
+        const data = await movieApiClient.getMovieReviewList(movieId);
+        if ("message" in data) {
+          setFetchError(error);
+        } else {
+          setReviewList(data.results);
+        }
+      } catch (error) {
+        setFetchError({ message: "An error occurred", isError: true });
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  console.log(reviewList, error, isLoading)
+    fetchReviews();
+  }, [movieId]);
 
   if (error) {
     return (
@@ -48,7 +58,7 @@ export default function MovieReviewList({ movieId }: { movieId: string }) {
       <ReviewsHeading data-testid="movie-review-list" $color={theme.foreground}>
         User Reviews
       </ReviewsHeading>
-      {reviewList?.results?.map((review) => (
+      {reviewList?.map((review) => (
         <MovieReviewCard review={review} key={review.id} />
       ))}
     </ReviewListContainer>

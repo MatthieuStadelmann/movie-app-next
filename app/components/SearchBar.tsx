@@ -52,9 +52,7 @@ export default function SearchBar({
 
   return (
     <SearchBarContainer>
-      <SearchBarTitle>
-        Welcome.
-      </SearchBarTitle>
+      <SearchBarTitle>Welcome.</SearchBarTitle>
       <SearchBarSubTitle>
         Millions of movies, TV shows and people to discover. Explore now.
       </SearchBarSubTitle>
@@ -75,10 +73,10 @@ export default function SearchBar({
           ></SearchInput>
           {suggestions.length > 0 && (
             <SuggestionContainer ref={ref}>
-              {suggestions.map((suggestion: string) => (
+              {suggestions.map((suggestion: string, index: number) => (
                 <Suggestion
                   onClick={() => onSuggestionClick(suggestion)}
-                  key={suggestion}
+                  key={suggestion + "-" + index}
                 >
                   {suggestion}
                 </Suggestion>

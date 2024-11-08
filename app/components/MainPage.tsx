@@ -4,6 +4,7 @@ import MovieList from "./MovieList";
 import Pagination from "./Pagination";
 import SearchBar from "./SearchBar";
 import { useSearchParams, useRouter } from "next/navigation";
+import movieApiClient from "../utils/apiClient";
 
 interface MainPageProps {
   initialData: ApiResponse<Movie> | ApiError;
@@ -34,9 +35,7 @@ export default function MainPage({ initialData }: MainPageProps) {
 
   async function getMovies(searchText: string, currentPage: number) {
     setLoading(true);
-    const response = await fetch(
-      `/api/movies?search=${searchText}&page=${currentPage}`
-    ).then((res) => res.json());
+    const response = await movieApiClient.getMovieList(searchText, currentPage);
     if ("message" in response) {
       setFetchError({
         message: "An error occurred while fetching the movies",
@@ -48,15 +47,14 @@ export default function MainPage({ initialData }: MainPageProps) {
       setSuggestions([]);
     }
     setLoading(false);
-    router.push(`/?search=${searchText}&page=${currentPage}`);
+    // router.push(`/?search=${searchText}&page=${currentPage}`);
   }
 
   async function getSuggestions(text: string) {
-    const response = await fetch(`/api/movies?search=${text}&page=1`).then(
-      (res) => res.json()
-    );
+    const response = await movieApiClient.getMovieList(text, 1);
+    // missing error and loading state
     if (!("message" in response)) {
-      setSuggestions(response.results.map((movie: Movie) => movie.title));
+      setSuggestions(response.results.map((movie) => movie.title));
     }
   }
 
@@ -97,12 +95,12 @@ export default function MainPage({ initialData }: MainPageProps) {
         suggestions={suggestions}
         setSuggestions={setSuggestions}
       />
-      {/* <MovieList movieList={movieList} error={error} loading={loading} /> */}
-      {/* <Pagination
+      <MovieList movieList={movieList} error={error} loading={loading} />
+      <Pagination
         currentPage={currentPage}
         lastPage={totalPages}
         onPageChange={onPageChange}
-      /> */}
+      />
     </>
   );
 }

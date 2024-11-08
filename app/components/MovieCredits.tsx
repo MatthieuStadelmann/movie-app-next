@@ -1,28 +1,15 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { useQuery } from "react-query";
-import { useSelector } from "react-redux";
 
 import { ErrorMessage, PageSection, SectionTitle } from "./styled";
 import settings from "../settings";
-import { RootState } from "../store/redux/store";
 import movieApiClient from "../utils/apiClient";
 import LoadingIndicator from "./styled/LoadingIndicator";
+import { DarkModeContext } from "../store/context";
 
 interface MovieCreditsProps {
   movieId: string;
 }
-
-const MovieCredits = ({ movieId }: MovieCreditsProps) => {
-  const theme = useSelector((state: RootState) => state.themeReducer.theme);
-  const { data, isError, error, isFetching } = useQuery<
-    MovieCreditsResponse,
-    Error
-  >({
-    queryKey: ["movie-credits", movieId],
-    queryFn: () => movieApiClient.getMovieCredits(movieId),
-    retry: false,
-  });
 
   /* START: And Example of a very expensive computation */
   function someExpensiveComputation() {
@@ -33,11 +20,39 @@ const MovieCredits = ({ movieId }: MovieCreditsProps) => {
     }
     return result;
   }
+
+const MovieCredits = ({ movieId }: MovieCreditsProps) => {
+  const { theme } = useContext(DarkModeContext);
+  const [credits, setCredits] = useState<MovieCreditsResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<ApiError | null>(null);
+
+  const fetchMovieCredits = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await movieApiClient.getMovieCredits(movieId);
+      if ("message" in data) {
+        setError({ message: data.message as string, isError: true });
+      } else {
+        setCredits(data);
+      }
+    } catch (err) {
+      setError({ message: "An error occured.", isError: true });
+    } finally {
+      setLoading(false);
+    }
+  }, [movieId, setLoading, setError, setCredits]); // dependencies
+
+  useEffect(() => {
+    fetchMovieCredits();
+  }, [movieId, fetchMovieCredits]);
+
+
   const expensiveResult = useMemo(() => someExpensiveComputation(), []);
 
 
   // render a message if there is an error
-  if (isError) {
+  if (error) {
     return (
       <PageSection>
         <ErrorMessage data-testid="movie-credits-error-message">
@@ -48,7 +63,7 @@ const MovieCredits = ({ movieId }: MovieCreditsProps) => {
   }
 
   // render a loading component while fetching data
-  if (isFetching) {
+  if (loading) {
     return (
       <PageSection>
         <LoadingIndicator data-testid="movie-credits-loading" />
@@ -56,13 +71,14 @@ const MovieCredits = ({ movieId }: MovieCreditsProps) => {
     );
   }
 
+
   /* END: And Example of a very expensive computation */
 
   return (
     <PageSection>
       <SectionTitle>Cast</SectionTitle>
       <CastList>
-        {data?.cast.map((castMember, index) => (
+        {credits?.cast.map((castMember, index) => (
           <CastMemberItem key={index}>
             <CastMemberImage
               src={`https://image.tmdb.org/t/p/w500${castMember.profile_path}`}

@@ -1,11 +1,8 @@
-import React, { useState } from "react";
-import moment from "moment";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import settings from "../../settings";
 import chroma from "chroma-js";
 import { DarkModeContext } from "../../store/context";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store/redux/store";
 import { formatDate } from "../../utils/formatDate";
 
 export default function MovieReviewCard({ review }: { review: MovieReview }) {
@@ -18,7 +15,7 @@ export default function MovieReviewCard({ review }: { review: MovieReview }) {
   const expandedStateLabel = isExpanded
     ? "Collapse review content"
     : "Expand review content";
-  const theme = useSelector((state: RootState) => state.themeReducer.theme);
+    const { theme } = useContext(DarkModeContext);
 
   return (
     <Card

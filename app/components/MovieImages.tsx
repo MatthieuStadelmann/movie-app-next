@@ -1,8 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useQuery } from "react-query";
 
-import movieApiClient from "../utils/apiClient";
 import {
   ErrorMessage,
   LoadingComponent,
@@ -10,20 +8,38 @@ import {
   SectionTitle,
 } from "./styled";
 import settings from "../settings";
-import e from "express";
+import apiClient from "../utils/apiClient";
 
 interface MovieImagesProps {
   movieId: string;
 }
 
 const MovieImages = ({ movieId }: MovieImagesProps) => {
-  const { data, error, isLoading } = useQuery<MovieImageResponse, Error>({
-    queryKey: ["movie-credits", movieId],
-    queryFn: () => movieApiClient.getMovieImages(movieId),
-    retry: false,
-  });
+  const [images, setImages] = useState<MovieImage[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (isLoading) {
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        setLoading(true);
+        const data = await apiClient.getMovieImages(movieId);
+        if (data && !("message" in data)) {
+          setImages(data.posters);
+        } else {
+          setError("Error fetching images");
+        }
+      } catch (e) {
+        setError("An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImages();
+  }, [movieId]);
+
+  if (loading) {
     return (
       <PageSection>
         <LoadingComponent
@@ -51,7 +67,7 @@ const MovieImages = ({ movieId }: MovieImagesProps) => {
     <PageSection aria-labelledby="movie-images-heading">
       <SectionTitle>Movie Posters</SectionTitle>
       <ImagesContainer>
-        {data?.posters?.map((image, index) => (
+        {images?.map((image, index) => (
           <Image
             key={index}
             src={`https://image.tmdb.org/t/p/w500${image.file_path}`}

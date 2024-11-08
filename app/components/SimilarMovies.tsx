@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useQuery } from "react-query";
 
 import movieApiClient from "../utils/apiClient";
 import SimpleMovieCard from "./SimpleMovieCard";
@@ -12,16 +11,32 @@ interface SimilarMoviesProps {
 }
 
 export default function SimilarMovies({ movieId }: SimilarMoviesProps) {
-  const { data, isError, error, isLoading } = useQuery<
-    ApiResponse<Movie>,
-    Error
-  >({
-    queryKey: ["similar-movies", movieId],
-    queryFn: () => movieApiClient.getMovieSimilar(movieId),
-    retry: false,
-  });
+  
+  const [moviesSimilar, setMovieSimilar] = useState<Movie[] | null>([]);
+  const [error, setFetchError] = useState<ApiError | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  if (isError) {
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setLoading(true);
+        const data = await movieApiClient.getMovieSimilar(movieId);
+        if ("message" in data) {
+          setFetchError({ message: data.message as string, isError: true });
+        } else {
+          setMovieSimilar(data.results);
+        }
+      } catch (err) {
+        setFetchError({ message: "An error occured.", isError: true });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, [movieId]);
+
+  if (error) {
     return (
       <ErrorMessage
         data-testid="similar-movies-error-message"
@@ -32,7 +47,7 @@ export default function SimilarMovies({ movieId }: SimilarMoviesProps) {
     );
   }
 
-  if (isLoading) {
+  if (loading) {
     return (
       <PageSection>
         <LoadingIndicator data-testid="similar-movies-loading" />
@@ -48,7 +63,7 @@ export default function SimilarMovies({ movieId }: SimilarMoviesProps) {
         aria-label="List of top rated movies"
         role="list"
       >
-        {data?.results?.map((movie: Movie) => (
+        {moviesSimilar?.map((movie: Movie) => (
           <SimpleMovieCard
             data-testid={`similar-movies-card-${movie.id}`}
             movie={movie}
