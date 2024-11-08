@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import styled from "styled-components";
 
 import { ErrorMessage, PageSection, SectionTitle } from "./styled";
@@ -11,15 +17,15 @@ interface MovieCreditsProps {
   movieId: string;
 }
 
-  /* START: And Example of a very expensive computation */
-  function someExpensiveComputation() {
-    let result = 1;
-    for (let i = 0; i < 1000000000; i++) {
-      // console.log(`Progress: ${i/100000} %`);
-      result += i;
-    }
-    return result;
+/* START: And Example of a very expensive computation */
+function someExpensiveComputation() {
+  let result = 1;
+  for (let i = 0; i < 1000000000; i++) {
+    // console.log(`Progress: ${i/100000} %`);
+    result += i;
   }
+  return result;
+}
 
 const MovieCredits = ({ movieId }: MovieCreditsProps) => {
   const { theme } = useContext(DarkModeContext);
@@ -47,9 +53,7 @@ const MovieCredits = ({ movieId }: MovieCreditsProps) => {
     fetchMovieCredits();
   }, [movieId, fetchMovieCredits]);
 
-
   const expensiveResult = useMemo(() => someExpensiveComputation(), []);
-
 
   // render a message if there is an error
   if (error) {
@@ -70,7 +74,6 @@ const MovieCredits = ({ movieId }: MovieCreditsProps) => {
       </PageSection>
     );
   }
-
 
   /* END: And Example of a very expensive computation */
 
@@ -114,6 +117,7 @@ const CastList = styled.ul`
 `;
 
 const CastMemberItem = styled.li`
+  flex: 0 0 auto;
   width: 200px;
   text-align: center;
   width: 200px;
